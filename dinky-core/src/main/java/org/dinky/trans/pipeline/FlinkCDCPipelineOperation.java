@@ -31,8 +31,8 @@ import java.util.regex.Pattern;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.ververica.cdc.composer.PipelineComposer;
-import com.ververica.cdc.composer.definition.PipelineDef;
+import org.apache.flink.cdc.composer.PipelineComposer;
+import org.apache.flink.cdc.composer.definition.PipelineDef;
 
 /**
  * FlinkCDCPipelineOperation
@@ -85,8 +85,8 @@ public class FlinkCDCPipelineOperation extends AbstractOperation implements Oper
     @Override
     public TableResult execute(Executor executor) {
         String yamlText = getPipelineConfigure(statement);
-        com.ververica.cdc.common.configuration.Configuration globalPipelineConfig =
-                com.ververica.cdc.common.configuration.Configuration.fromMap(executor.getSetConfig());
+        org.apache.flink.cdc.common.configuration.Configuration globalPipelineConfig =
+                org.apache.flink.cdc.common.configuration.Configuration.fromMap(executor.getSetConfig());
         // Parse pipeline definition file
         YamlTextPipelineDefinitionParser pipelineDefinitionParser = new YamlTextPipelineDefinitionParser();
         // Create composer

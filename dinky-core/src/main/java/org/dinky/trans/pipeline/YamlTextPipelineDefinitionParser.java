@@ -19,7 +19,7 @@
 
 package org.dinky.trans.pipeline;
 
-import static com.ververica.cdc.common.utils.Preconditions.checkNotNull;
+import static org.apache.flink.cdc.common.utils.Preconditions.checkNotNull;
 
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.JsonNode;
@@ -31,11 +31,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.ververica.cdc.common.configuration.Configuration;
-import com.ververica.cdc.composer.definition.PipelineDef;
-import com.ververica.cdc.composer.definition.RouteDef;
-import com.ververica.cdc.composer.definition.SinkDef;
-import com.ververica.cdc.composer.definition.SourceDef;
+import org.apache.flink.cdc.common.configuration.Configuration;
+import org.apache.flink.cdc.composer.definition.PipelineDef;
+import org.apache.flink.cdc.composer.definition.RouteDef;
+import org.apache.flink.cdc.composer.definition.SinkDef;
+import org.apache.flink.cdc.composer.definition.SourceDef;
 
 /**
  * YamlTextPipelineDefinitionParser
