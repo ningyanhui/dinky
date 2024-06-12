@@ -19,6 +19,8 @@
 
 package org.dinky.trans.pipeline;
 
+import org.apache.flink.cdc.cli.parser.YamlPipelineDefinitionParser;
+import org.apache.flink.cdc.common.configuration.Configuration;
 import org.dinky.executor.Executor;
 import org.dinky.trans.AbstractOperation;
 import org.dinky.trans.Operation;
@@ -65,6 +67,7 @@ import org.apache.flink.cdc.composer.definition.PipelineDef;
 public class FlinkCDCPipelineOperation extends AbstractOperation implements Operation {
 
     private static final String KEY_WORD = "EXECUTE PIPELINE";
+    
 
     public FlinkCDCPipelineOperation() {}
 
@@ -85,10 +88,9 @@ public class FlinkCDCPipelineOperation extends AbstractOperation implements Oper
     @Override
     public TableResult execute(Executor executor) {
         String yamlText = getPipelineConfigure(statement);
-        org.apache.flink.cdc.common.configuration.Configuration globalPipelineConfig =
-                org.apache.flink.cdc.common.configuration.Configuration.fromMap(executor.getSetConfig());
         // Parse pipeline definition file
         YamlTextPipelineDefinitionParser pipelineDefinitionParser = new YamlTextPipelineDefinitionParser();
+        Configuration globalPipelineConfig = new Configuration();
         // Create composer
         PipelineComposer composer = createComposer(executor);
 
