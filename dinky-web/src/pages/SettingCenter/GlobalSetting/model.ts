@@ -17,7 +17,11 @@
  *
  */
 
-import { queryDsConfig } from '@/pages/SettingCenter/GlobalSetting/service';
+import {
+  queryConfigByKeyword,
+  queryDsConfig,
+  queryResourceConfig
+} from '@/pages/SettingCenter/GlobalSetting/service';
 import { BaseConfigProperties } from '@/types/SettingCenter/data';
 import { createModelTypes } from '@/utils/modelUtils';
 import { Effect } from '@@/plugin-dva/types';
@@ -27,7 +31,11 @@ const SYS_CONFIG = 'SysConfig';
 
 export type SysConfigStateType = {
   dsConfig: BaseConfigProperties[];
+  metricConfig: BaseConfigProperties[];
+  resourceConfig: BaseConfigProperties[];
   enabledDs: boolean;
+  enableMetricMonitor: boolean;
+  enableResource: boolean;
 };
 
 export type ConfigModelType = {
@@ -35,10 +43,16 @@ export type ConfigModelType = {
   state: SysConfigStateType;
   effects: {
     queryDsConfig: Effect;
+    queryMetricConfig: Effect;
+    queryResourceConfig: Effect;
   };
   reducers: {
     saveDsConfig: Reducer<SysConfigStateType>;
+    saveMetricConfig: Reducer<SysConfigStateType>;
+    saveResourceConfig: Reducer<SysConfigStateType>;
     updateEnabledDs: Reducer<SysConfigStateType>;
+    updateEnableMetricMonitor: Reducer<SysConfigStateType>;
+    updateEnableResource: Reducer<SysConfigStateType>;
   };
 };
 
@@ -46,7 +60,11 @@ const ConfigModel: ConfigModelType = {
   namespace: SYS_CONFIG,
   state: {
     dsConfig: [],
-    enabledDs: false
+    metricConfig: [],
+    resourceConfig: [],
+    enabledDs: false,
+    enableMetricMonitor: false,
+    enableResource: false
   },
 
   effects: {
@@ -66,6 +84,44 @@ const ConfigModel: ConfigModelType = {
           payload: enabledDs
         });
       }
+    },
+
+    *queryMetricConfig({ payload }, { call, put }) {
+      console.log(payload);
+      const response: BaseConfigProperties[] = yield call(queryConfigByKeyword, payload);
+      yield put({
+        type: 'saveMetricConfig',
+        payload: response || []
+      });
+      console.log(response);
+      if (response && response.length > 0) {
+        const enableResource = response.some(
+          (item: BaseConfigProperties) =>
+            item.key === 'sys.metrics.settings.sys.enable' && item.value === true
+        );
+        yield put({
+          type: 'updateEnableMetricMonitor',
+          payload: enableResource
+        });
+      }
+    },
+
+    *queryResourceConfig({ payload }, { call, put }) {
+      const response: BaseConfigProperties[] = yield call(queryResourceConfig, payload);
+      yield put({
+        type: 'saveResourceConfig',
+        payload: response || []
+      });
+      if (response && response.length > 0) {
+        const enableResource = response.some(
+          (item: BaseConfigProperties) =>
+            item.key === 'sys.resource.settings.base.enable' && item.value === true
+        );
+        yield put({
+          type: 'updateEnableResource',
+          payload: enableResource
+        });
+      }
     }
   },
 
@@ -76,15 +132,38 @@ const ConfigModel: ConfigModelType = {
         dsConfig: payload
       };
     },
+    saveMetricConfig(state, { payload }) {
+      return {
+        ...state,
+        metricConfig: payload
+      };
+    },
+    saveResourceConfig(state, { payload }) {
+      return {
+        ...state,
+        resourceConfig: payload
+      };
+    },
+    updateEnableMetricMonitor(state, { payload }) {
+      return {
+        ...state,
+        enableMetricMonitor: payload
+      };
+    },
     updateEnabledDs(state, { payload }) {
       return {
         ...state,
         enabledDs: payload
       };
+    },
+    updateEnableResource(state, { payload }) {
+      return {
+        ...state,
+        enableResource: payload
+      };
     }
   }
 };
-
 export const [CONFIG_MODEL, CONFIG_MODEL_ASYNC] = createModelTypes(ConfigModel);
 
 export default ConfigModel;

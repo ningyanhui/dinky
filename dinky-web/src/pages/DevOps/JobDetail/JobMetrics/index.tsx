@@ -23,13 +23,16 @@ import { JOB_STATUS } from '@/pages/DevOps/constants';
 import { JobMetricsItem, JobProps, MetricsTimeFilter } from '@/pages/DevOps/JobDetail/data';
 import { buildMetricsTarget } from '@/pages/DevOps/JobDetail/JobMetrics/function';
 import MonitorConfigForm from '@/pages/DevOps/JobDetail/JobMetrics/MetricsForm/MetricsConfigForm';
-import { getMetricsLayout, putMetricsLayout } from '@/pages/DevOps/JobDetail/srvice';
-import { Space } from 'antd';
-import { useState } from 'react';
+import { getMetricsLayout, putMetricsLayout } from '@/pages/DevOps/JobDetail/service';
+import { SysConfigStateType } from '@/pages/SettingCenter/GlobalSetting/model';
+import { l } from '@/utils/intl';
+import { connect } from '@umijs/max';
+import { Result, Space } from 'antd';
+import { memo, useState } from 'react';
 import JobChart from './JobChart/JobChart';
 
-const JobMetrics = (props: JobProps) => {
-  const { jobDetail } = props;
+const JobMetrics = (props: JobProps & connect) => {
+  const { jobDetail, dispatch, enableMetricMonitor } = props;
   const layoutName = `${jobDetail.instance.name}-${jobDetail.instance.taskId}`;
 
   const [timeRange, setTimeRange] = useState<MetricsTimeFilter>({
@@ -38,10 +41,14 @@ const JobMetrics = (props: JobProps) => {
     isReal: true
   });
 
-  const layoutData = useHookRequest(getMetricsLayout, { defaultParams: [layoutName] });
+  const layoutData = useHookRequest(getMetricsLayout, {
+    defaultParams: [layoutName],
+    refreshDeps: [layoutName, timeRange, jobDetail.instance]
+  });
   const saveLayout = useHookRequest(putMetricsLayout, {
     manual: true,
-    defaultParams: [layoutName, []]
+    defaultParams: [layoutName, []],
+    refreshDeps: [layoutName]
   });
 
   const onTimeSelectChange = (filter: MetricsTimeFilter) => {
@@ -52,27 +59,43 @@ const JobMetrics = (props: JobProps) => {
     let params: JobMetricsItem[] = [];
     Object.values(targetKeys).forEach((i) => params.push(...i));
     await saveLayout.run(layoutName, params);
-    layoutData.run(layoutName);
+    await layoutData.run(layoutName);
+    await layoutData.refresh();
     return true;
   };
 
   return (
     <>
-      <Space style={{ marginBottom: 20 }}>
-        <MetricsFilter onTimeSelect={onTimeSelectChange} />
-        {jobDetail.instance.status == JOB_STATUS.RUNNING ? (
-          <MonitorConfigForm
-            onSelectChange={onSelectMetricsChange}
+      {enableMetricMonitor ? (
+        <>
+          <Space style={{ marginBottom: 20 }}>
+            <MetricsFilter onTimeSelect={onTimeSelectChange} />
+            {jobDetail.instance.status == JOB_STATUS.RUNNING ? (
+              <MonitorConfigForm
+                onSelectChange={onSelectMetricsChange}
+                jobDetail={jobDetail}
+                initSelected={buildMetricsTarget(layoutData.data as JobMetricsItem[])}
+              />
+            ) : (
+              <></>
+            )}
+          </Space>
+          <JobChart
+            metricsList={layoutData.data as JobMetricsItem[]}
             jobDetail={jobDetail}
-            initSelected={buildMetricsTarget(layoutData.data)}
+            timeRange={timeRange}
           />
-        ) : (
-          <></>
-        )}
-      </Space>
-      <JobChart metricsList={layoutData.data} jobDetail={jobDetail} timeRange={timeRange} />
+        </>
+      ) : (
+        <Result
+          status={'warning'}
+          title={<span className={'needWrap'}>{l('metrics.dinky.not.open')}</span>}
+        />
+      )}
     </>
   );
 };
 
-export default JobMetrics;
+export default connect(({ SysConfig }: { SysConfig: SysConfigStateType }) => ({
+  enableMetricMonitor: SysConfig.enableMetricMonitor
+}))(memo(JobMetrics));

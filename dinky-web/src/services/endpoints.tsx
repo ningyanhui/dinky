@@ -186,6 +186,8 @@ export enum API_CONSTANTS {
   // ------------------------------------ system process  ------------------------------------
   PROCESS_LIST = '/api/process/listAllProcess',
   PROCESS_LOG = '/api/process/getProcess',
+  KILL_PROCESS = '/api/process/killProcess',
+  PROCESS_LOG_CLEAR = '/api/process/clearProcessLog',
 
   /** ------------------------------------------------ Devops center  ------------------------------------ */
   // ------------------------------------ devops job  ------------------------------------
@@ -277,6 +279,8 @@ export enum API_CONSTANTS {
   // ------------------------------------ scheduler ------------------------------------
   SCHEDULER_QUERY_UPSTREAM_TASKS = '/api/scheduler/queryUpstreamTasks',
   SCHEDULER_QUERY_TASK_DEFINITION = '/api/scheduler/queryTaskDefinition',
+  SCHEDULER_QUERY_TASK_GROUP = '/api/scheduler/task/groups',
+
   SCHEDULER_CREATE_OR_UPDATE_TASK_DEFINITION = '/api/scheduler/createOrUpdateTaskDefinition',
 
   // ------------------------------------ flink conf about ------------------------------------

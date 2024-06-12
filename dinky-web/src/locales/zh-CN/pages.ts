@@ -90,6 +90,8 @@ export default {
   'datastudio.middle.qg.udf': 'UDF',
   'datastudio.header.pushdolphin.title': '将任务 [ {name} ] 推送至 DolphinScheduler',
   'datastudio.header.pushdolphin.taskId': 'Dinky任务编码',
+  'datastudio.header.pushdolphin.taskGroup': '任务组',
+  'datastudio.header.pushdolphin.taskGroupPriority': '组内优先级',
   'datastudio.header.pushdolphin.taskName': 'Task名称: {name}',
   'datastudio.header.pushdolphin.taskNameExt':
     'Task类型: {type} 所属进程定义: {processDefinitionName}',
@@ -192,6 +194,8 @@ export default {
   'devops.jobinfo.job.keyConfirm': '确定 {key} 该作业吗？',
   'devops.jobinfo.metrics.configMetrics': '任务监控配置',
   'devops.jobinfo.metrics.metricsItems': '监控项列表',
+  'devops.jobinfo.metrics.vertices': '顶点',
+  'devops.jobinfo.metrics.name': '监控项名称',
   'devops.jobinfo.metrics.selected': '已选择',
   'devops.jobinfo.offline': '下线',
   'devops.jobinfo.recently.job.status': '查看最近保存的作业状态信息',
@@ -287,6 +291,7 @@ export default {
   'login.result': '{msg}\t\t{time}',
   'login.username.placeholder': '用户名',
   'login.username.required': '用户名是必填项！',
+  'login.token.error': '无法获取token信息/会话已过期，即将跳转到登录页,请重新登录...',
   /**
    *
    * menu
@@ -343,7 +348,7 @@ export default {
   'metrics.flink.subTask.placeholder': '请选择子任务名称',
   'metrics.flink.taskId': 'Dinky 任务ID',
   'metrics.dinky.not.open':
-    '暂未开启 Dinky Server 监控, 请前往 配置中心 -> 全局配置 -> Metrics 配置 -> Dinky JVM Monitor 开关 进行开启',
+    '未开启监控功能,Dinky Server 和 Flink 任务监控功能无法使用. \n请前往 配置中心 -> 全局配置 -> Metrics 配置 -> Dinky JVM Monitor 开关 进行开启',
   'metrics.flink.deleteConfirm':
     '确认删除该任务下的监控数据吗? \n注意:该操作会同步影响运维中心该任务的监控数据!!\n请谨慎操作,该操作不可撤消!',
   /**
@@ -749,8 +754,10 @@ export default {
   'rc.cc.sqlSubmitJarPath': 'Jar 文件路径',
   'rc.cc.sqlSubmitJarPathHelp':
     '请输入 Jar 文件路径! eg: hdfs:///dinky/dinky-app-1.16-with-dependencies.jar',
+  'rc.cc.sqlSubmitJarPathHelpTips':
+    'Yarn 模式下此参数可以设置为: hdfs:///dinky/dinky-app-1.17-with-dependencies.jar 或者 rs:/dinky/dinky-app-1.17-with-dependencies.jar 如果设置为 rs:/ 协议,则需要将该jar包上传到 Dinky 的资源中心中,然后填写该路径。K8s 模式下仅支持 local:// 协议',
   'rc.cc.start': '启动 Session 集群',
-  'rc.cc.submitSqlConfig': '提交 FlinkSQL 配置项 (Application 模式必填)',
+  'rc.cc.submitSqlConfig': '提交 FlinkSQL 配置项',
   'rc.cc.tmHeap': 'TaskManager 堆内存',
   'rc.cc.tmHeapHelp': '请输入 TaskManager 堆内存大小! 此参数配置项为',
   'rc.cc.tmMem': 'TaskManager 内存',
@@ -831,6 +838,7 @@ export default {
   'rc.ds.delete': '删除数据源',
   'rc.ds.deleteConfirm': '确定删除该数据源吗？',
   'rc.ds.detail.tag.console': '控制台',
+  'rc.ds.detail.tag.console.clear.log': '清除日志...',
   'rc.ds.detail.tag.desc': '描述',
   'rc.ds.detail.tag.gensql': '生成 SQL',
   'rc.ds.detail.tag.query': '查询',
@@ -939,7 +947,14 @@ export default {
   'rc.resource.upload.tip2': '支持单个或批量上传。严禁上传公司数据或其他禁止上传的文件。',
   'rc.resource.filelist': '文件列表',
   'rc.resource.sync': '同步目录结构',
-  'rc.resource.copy': '复制为: {fillValue}',
+  'rc.resource.copy_to_add_custom_jar': '复制为 ADD CUSTOMJAR 语法',
+  'rc.resource.copy_to_add_jar': '复制为 ADD JAR 语法',
+  'rc.resource.copy_to_add_file': '复制为 ADD FILE 语法',
+  'rc.resource.copy_to_add_rs_path': '复制 RS 协议资源路径',
+  'rc.resource.copy_success':
+    '复制成功，值为：[{fillValue}] 已复制到剪贴板。请粘贴到需要的地方进行使用',
+  'rc.resource.enable': '未启用资源管理功能',
+  'rc.resource.enable.tips': '请前往 [配置中心 -> 全局配置 -> Resource 配置] 中启用资源管理功能!!!',
 
   'rc.template.codeType': '代码类型',
   'rc.template.codeTypePlaceholder': '请选择代码类型！',
